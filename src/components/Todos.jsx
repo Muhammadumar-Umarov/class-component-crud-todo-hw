@@ -10,46 +10,78 @@ export default class Todos extends Component {
       email: "",
       password: "",
       formOpening: false,
+      editUser: [],
+      editId: null,
       data: [],
     }
   }
 
   handleSubmit = (e) => {
     e.preventDefault()
-    if (!this.state.firstName.trim()) return null
-    if (!this.state.lastName.trim()) return null
-    if (!this.state.email.trim()) return null
-    if (!this.state.password.trim()) return null
-    const newTodo = {
-      id: Date.now(),
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      email: this.state.email,
-      password: this.state.password,
+    const { firstName, lastName, email, password, data, editId } = this.state
+
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim()) return
+
+    if (editId) {
+      const updated = data.map((item) =>
+        item.id === editId
+          ? { ...item, firstName, lastName, email, password }
+          : item
+      )
+      this.setState({
+        data: updated,
+        editId: null,
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        formOpening: false,
+      })
+      localStorage.setItem("users", JSON.stringify(updated))
+    } else {
+      const newUser = {
+        id: Date.now(),
+        firstName,
+        lastName,
+        email,
+        password,
+      }
+      const newData = [...data, newUser]
+      this.setState({
+        data: newData,
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        formOpening: false,
+      })
+      localStorage.setItem("users", JSON.stringify(newData))
     }
-    this.setState({
-      data: [...this.state.data, newTodo],
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      formOpening: false,
-    })
+  }
+
+  componentDidMount() {
+    const saved = localStorage.getItem("users")
+    if (saved) {
+      this.setState({ data: JSON.parse(saved) })
+    }
   }
 
   // DELETE
   handleDelete = (id) => {
     const filteredData = this.state.data.filter((item) => item.id !== id)
-    this.setState({ data: filteredData })
+
+    this.setState({ data: filteredData }, () => {
+      localStorage.setItem("users", JSON.stringify(this.state.data))
+    })
   }
 
   render() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
         <div className="container mx-auto max-w-6xl">
-          
+
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-slate-800">User Management System</h1>
+            <h1 className="text-3xl font-bold text-slate-800">Todo App</h1>
             <button
               onClick={() => this.setState({ formOpening: true })}
               className="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
@@ -73,7 +105,7 @@ export default class Todos extends Component {
                 {this.state.data?.map((item, index) => (
                   <tr
                     key={item.id}
-                    className={`${index % 2 === 0 ? "bg-slate-50" : "bg-white"} hover:bg-slate-100 transition-colors duration-150`}
+                    className={`${index % 2 === 0 ? "bg-slate-150" : "bg-white"} hover:bg-slate-100 transition-colors duration-150`}
                   >
                     <td className="px-6 py-4 border-r border-slate-200 font-medium text-slate-700 capitalize">
                       {item.firstName}
@@ -87,14 +119,25 @@ export default class Todos extends Component {
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center gap-3 justify-center">
-                        <button className="p-2 rounded-lg hover:bg-yellow-100 transition-colors duration-200">
-                          <EditOutlined style={{ color: "#f59e0b", fontSize: "18px" }} />
+                        <button
+                          onClick={() =>
+                            this.setState({
+                              formOpening: true,
+                              editId: item.id,
+                              firstName: item.firstName,
+                              lastName: item.lastName,
+                              email: item.email,
+                              password: item.password
+                            })
+                          }
+                          className="p-2 rounded-lg hover:bg-yellow-100 transition-colors duration-200 cursor-pointer">
+                          <EditOutlined style={{ color: "#f59e0b", fontSize: "20px" }} />
                         </button>
                         <button
                           onClick={() => this.handleDelete(item.id)}
-                          className="p-2 rounded-lg hover:bg-red-100 transition-colors duration-200"
+                          className="p-2 rounded-lg hover:bg-red-100 transition-colors duration-200 cursor-pointer"
                         >
-                          <DeleteOutlined style={{ color: "#ef4444", fontSize: "18px" }} />
+                          <DeleteOutlined style={{ color: "#ef4444", fontSize: "20px" }} />
                         </button>
                       </div>
                     </td>
@@ -111,14 +154,14 @@ export default class Todos extends Component {
             </table>
           </div>
 
-          {this.state.formOpening && (  
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          {this.state.formOpening && (
+            <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50">
               <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-8 w-full max-w-md">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-slate-800">Add New User</h2>
                   <button
                     onClick={() => this.setState({ formOpening: false })}
-                    className="text-slate-400 hover:text-slate-600 text-2xl font-bold"
+                    className="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer"
                   >
                     ×
                   </button>
@@ -198,8 +241,6 @@ export default class Todos extends Component {
                     </button>
                   </div>
                 </form>
-
-
               </div>
             </div>
           )}
