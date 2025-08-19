@@ -35,6 +35,15 @@ export default class Todos extends Component {
       password: "",
       formOpening: false,
     })
+
+    localStorage.setItem("userInfo", newTodo.email)
+    localStorage.setItem("userFName", newTodo.firstName)
+    localStorage.setItem("userLname", newTodo.lastName)
+    localStorage.setItem("userPass", newTodo.password)
+    localStorage.getItem("userInfo")
+    localStorage.getItem("userFName")
+    localStorage.getItem("userLname")
+    localStorage.getItem("userPass")
   }
 
   // DELETE
@@ -88,7 +97,7 @@ export default class Todos extends Component {
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center gap-3 justify-center">
                         <button className="p-2 rounded-lg hover:bg-yellow-100 transition-colors duration-200">
-                          <EditOutlined style={{ color: "#f59e0b", fontSize: "18px" }} />
+                          <EditOutlined style={{ color: "#f59e0b", fontSize: "22px" }} />
                         </button>
                         <button
                           onClick={() => this.handleDelete(item.id)}
@@ -112,7 +121,7 @@ export default class Todos extends Component {
           </div>
 
           {this.state.formOpening && (  
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="fixed inset-0 bg-black/45 bg-opacity-50 flex items-center justify-center p-4 z-50">
               <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-8 w-full max-w-md">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-slate-800">Add New User</h2>
