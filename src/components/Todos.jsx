@@ -111,7 +111,7 @@ export default function ContactsApp() {
                   <td className="px-6 py-4 border-r border-slate-200 font-medium text-slate-700 capitalize">
                     {item.ismi}
                   </td>
-                  <td className="px-6 py-4 border-r border-slate-200 font-medium text-slate-700">{item.raqami}</td>
+                  <td className="px-6 py-4 border-r border-slate-200 font-medium text-slate-700"><a href="tel:{item.raqami}">{item.raqami}</a></td>
                   <td className="px-6 py-4 border-r border-slate-200 font-medium text-slate-700">{item.manzil}</td>
                   <td className="px-6 py-4 border-r border-slate-200 font-medium text-slate-700">{item.izoh}</td>
                   <td className="px-6 py-4 text-center">
@@ -227,7 +227,7 @@ export default function ContactsApp() {
                     placeholder="Telefon raqami"
                     value={raqami}
                     onChange={(e) => setRaqami(e.target.value)}
-                    type="text"
+                    type="tel"
                     className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 placeholder-slate-400 text-slate-700 outline-none"
                   />
                 </div>
