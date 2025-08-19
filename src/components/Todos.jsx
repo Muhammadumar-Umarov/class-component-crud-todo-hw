@@ -10,6 +10,8 @@ export default class Todos extends Component {
       email: "",
       password: "",
       formOpening: false,
+      editUser: [],
+      editId: null,
       data: [],
     }
   }
@@ -35,30 +37,24 @@ export default class Todos extends Component {
       password: "",
       formOpening: false,
     })
-
-    localStorage.setItem("userInfo", newTodo.email)
-    localStorage.setItem("userFName", newTodo.firstName)
-    localStorage.setItem("userLname", newTodo.lastName)
-    localStorage.setItem("userPass", newTodo.password)
-    localStorage.getItem("userInfo")
-    localStorage.getItem("userFName")
-    localStorage.getItem("userLname")
-    localStorage.getItem("userPass")
   }
 
   // DELETE
   handleDelete = (id) => {
     const filteredData = this.state.data.filter((item) => item.id !== id)
-    this.setState({ data: filteredData })
+
+    this.setState({ data: filteredData }, () => {
+      localStorage.setItem("users", JSON.stringify(this.state.data))
+    })
   }
 
   render() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
         <div className="container mx-auto max-w-6xl">
-          
+
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-slate-800">User Management System</h1>
+            <h1 className="text-3xl font-bold text-slate-800">Todo App</h1>
             <button
               onClick={() => this.setState({ formOpening: true })}
               className="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
@@ -82,7 +78,7 @@ export default class Todos extends Component {
                 {this.state.data?.map((item, index) => (
                   <tr
                     key={item.id}
-                    className={`${index % 2 === 0 ? "bg-slate-50" : "bg-white"} hover:bg-slate-100 transition-colors duration-150`}
+                    className={`${index % 2 === 0 ? "bg-slate-150" : "bg-white"} hover:bg-slate-100 transition-colors duration-150`}
                   >
                     <td className="px-6 py-4 border-r border-slate-200 font-medium text-slate-700 capitalize">
                       {item.firstName}
@@ -97,13 +93,13 @@ export default class Todos extends Component {
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center gap-3 justify-center">
                         <button className="p-2 rounded-lg hover:bg-yellow-100 transition-colors duration-200">
-                          <EditOutlined style={{ color: "#f59e0b", fontSize: "22px" }} />
+                          <EditOutlined style={{ color: "#f59e0b", fontSize: "18px" }} />
                         </button>
                         <button
                           onClick={() => this.handleDelete(item.id)}
-                          className="p-2 rounded-lg hover:bg-red-100 transition-colors duration-200"
+                          className="p-2 rounded-lg hover:bg-red-100 transition-colors duration-200 cursor-pointer"
                         >
-                          <DeleteOutlined style={{ color: "#ef4444", fontSize: "18px" }} />
+                          <DeleteOutlined style={{ color: "#ef4444", fontSize: "20px" }} />
                         </button>
                       </div>
                     </td>
@@ -121,13 +117,13 @@ export default class Todos extends Component {
           </div>
 
           {this.state.formOpening && (  
-            <div className="fixed inset-0 bg-black/45 bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
               <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-8 w-full max-w-md">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-slate-800">Add New User</h2>
                   <button
                     onClick={() => this.setState({ formOpening: false })}
-                    className="text-slate-400 hover:text-slate-600 text-2xl font-bold"
+                    className="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer"
                   >
                     ×
                   </button>
@@ -207,8 +203,6 @@ export default class Todos extends Component {
                     </button>
                   </div>
                 </form>
-
-
               </div>
             </div>
           )}
